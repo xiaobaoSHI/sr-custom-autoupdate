@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "target": "v2rayN 7.25.6 RulesItem[] / Xray",
+  "input_sha256": "1b783252d0ae5bf9cf3895cf5bcb61a50d7132bc9e713e063be5c2ae387b75a1",
+  "input_rule_counts": {
+    "DOMAIN-KEYWORD": 7,
+    "DOMAIN-SUFFIX": 30196,
+    "FINAL": 1,
+    "IP-CIDR": 25,
+    "RULE-SET": 1
+  },
+  "expanded_rule_counts": {
+    "DOMAIN": 2,
+    "DOMAIN-KEYWORD": 7,
+    "DOMAIN-SUFFIX": 30196,
+    "FINAL": 1,
+    "IP-CIDR": 25
+  },
+  "emitted_match_counts": {
+    "domain": 30205,
+    "ip": 33,
+    "port": 1
+  },
+  "duplicates_removed": 3,
+  "duplicates": [
+    {
+      "field": "domain",
+      "value": "domain:dnsleaktest.com",
+      "outboundTag": "proxy"
+    },
+    {
+      "field": "domain",
+      "value": "domain:ipleak.net",
+      "outboundTag": "proxy"
+    },
+    {
+      "field": "domain",
+      "value": "domain:browserleaks.com",
+      "outboundTag": "proxy"
+    }
+  ],
+  "output_rule_groups": 18,
+  "rulesets": [
+    {
+      "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/AppleNews/AppleNews.list",
+      "sha256": "ec57625e5b938396b92034c0d71eadbd0c4a1adbff8243f05d8bb97441ad1b26",
+      "rule_count": 2,
+      "rule_counts": {
+        "DOMAIN": 2
+      }
+    }
+  ],
+  "bypass": {
+    "source_skip_proxy": [
+      "192.168.0.0/16",
+      "10.0.0.0/8",
+      "172.16.0.0/12",
+      "localhost",
+      "*.local",
+      "captive.apple.com"
+    ],
+    "additional_local_ip": [
+      "127.0.0.0/8",
+      "169.254.0.0/16",
+      "::1/128",
+      "fe80::/10",
+      "fc00::/7"
+    ]
+  },
+  "output_sha256": "8326a69bc58d328001a11791165f3211d76dd6312b4fe320ba682e0c4761529d",
+  "input_file": "sr_top500_banlist_custom_daily.conf"
+}
