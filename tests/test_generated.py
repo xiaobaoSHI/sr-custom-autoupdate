@@ -69,29 +69,28 @@ class GeneratedArtifactTests(unittest.TestCase):
         for duplicate in self.meta["duplicates"]:
             self.assertIn((duplicate["field"], duplicate["value"], duplicate["outboundTag"]), self.matchers)
 
-    def test_every_top_level_matcher_survives_in_original_order(self):
-        # Independent parser of this source grammar, not the conversion API.
+    def test_domain_and_ip_rules_keep_source_order_with_domains_first(self):
+        # Compare source order independently for domain and IP predicates.
+        # Keeping domains first prevents IPOnDemand from resolving a listed
+        # proxy domain before its domain rule gets a chance to match.
         prefixes = {"DOMAIN": "full:", "DOMAIN-SUFFIX": "domain:", "DOMAIN-KEYWORD": "keyword:"}
         actions = {"PROXY": "proxy", "DIRECT": "direct", "REJECT": "block"}
-        # Source DIRECT rules may repeat an earlier bypass matcher; those
-        # legitimately keep the bypass position after global deduplication.
+        expected = {"domain": [], "ip": []}
         seen = set()
-        skip_line = next(line for line in self.source.splitlines()
-                         if line.strip().lower().startswith("skip-proxy"))
-        skip_values = [value.strip() for value in skip_line.split("=", 1)[1].split(",")]
-        self.assertEqual(skip_values, self.meta["bypass"]["source_skip_proxy"])
-        for value in skip_values:
-            try:
-                item = ("ip", str(ipaddress.ip_network(value, strict=False)), "direct")
-            except ValueError:
-                pattern = ("regexp:^.+\\." + re.escape(value[2:].lower()) + "$"
-                           if value.startswith("*.") else "full:" + value.lower())
-                item = ("domain", pattern, "direct")
-            seen.add(item)
-        seen.update(("ip", value, "direct") for value in self.meta["bypass"]["additional_local_ip"])
-        previous_index = -1
+
+        def add(item):
+            if item not in seen:
+                seen.add(item)
+                expected[item[0]].append(item)
+
+        # Local bypasses are generated before source rules, but grouped by
+        # predicate type in the output.
+        for group in self.rules:
+            if group["remarks"].startswith("Local"):
+                for item in atoms([group]):
+                    add(item)
+
         in_rules = False
-        positions = {item: index for index, item in enumerate(self.matchers)}
         for line in self.source.splitlines():
             line = line.strip()
             if line.startswith("["):
@@ -102,27 +101,34 @@ class GeneratedArtifactTests(unittest.TestCase):
             parts = [part.strip() for part in line.split(",")]
             kind = parts[0].upper()
             if kind == "RULE-SET":
-                # Remote contents can change independently of the fixture.
-                # Expanded remote matchers are already counted above; a later
-                # source rule duplicating one keeps its remote position.
                 remote_tag = actions[parts[2].upper()]
                 for group in self.rules:
                     if group["remarks"] == "Apple News (expanded RULE-SET)" and group["outboundTag"] == remote_tag:
-                        seen.update(atoms([group]))
+                        for item in atoms([group]):
+                            add(item)
                 continue
             if kind == "FINAL":
-                item = ("port", "0-65535", "direct")
-            elif kind in prefixes:
+                continue
+            if kind in prefixes:
                 item = ("domain", prefixes[kind] + parts[1].lower(), actions[parts[2].upper()])
             else:
                 self.assertIn(kind, {"IP-CIDR", "IP-CIDR6"})
                 item = ("ip", str(ipaddress.ip_network(parts[1], strict=False)), actions[parts[2].upper()])
-            if item in seen:
-                continue
-            seen.add(item)
-            self.assertIn(item, positions)
-            self.assertGreater(positions[item], previous_index)
-            previous_index = positions[item]
+            add(item)
+
+        actual = {"domain": [], "ip": []}
+        for item in self.matchers:
+            if item[0] in actual:
+                actual[item[0]].append(item)
+        self.assertEqual(expected, actual)
+
+        domain_positions = [i for i, rule in enumerate(self.rules) if "domain" in rule]
+        ip_positions = [i for i, rule in enumerate(self.rules) if "ip" in rule]
+        self.assertTrue(domain_positions)
+        self.assertTrue(ip_positions)
+        self.assertLess(max(domain_positions), min(ip_positions))
+        self.assertEqual(self.rules[-1]["outboundTag"], "direct")
+        self.assertEqual(self.rules[-1]["port"], "0-65535")
 
     def test_four_custom_detection_sites_keep_priority(self):
         custom_groups = [rule for rule in self.rules if rule["remarks"] == "Custom priority rules"]
@@ -159,8 +165,9 @@ class GeneratedArtifactTests(unittest.TestCase):
         }.items():
             with self.subTest(address=address):
                 self.assertEqual(route(self.rules, ip=address), tag)
-        # When Xray knows both a local IP and a blacklisted host, bypass wins.
-        self.assertEqual(route(self.rules, host="www.google.com", ip="192.168.1.1"), "direct")
+        # Domain-list matches intentionally precede IP checks. A listed proxy
+        # domain therefore remains proxy even if its resolved address is private.
+        self.assertEqual(route(self.rules, host="www.google.com", ip="192.168.1.1"), "proxy")
 
     def test_only_routing_rules_and_final_direct(self):
         self.assertIsInstance(self.rules, list)

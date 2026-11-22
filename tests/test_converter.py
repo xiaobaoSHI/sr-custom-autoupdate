@@ -107,15 +107,23 @@ class ConverterTests(unittest.TestCase):
         self.assertEqual(route(rules, host="late.example.com"), "proxy")
         self.assertEqual(route(rules, host="www.amazon.cn"), "proxy")
 
-    def test_domain_and_ip_order_are_not_rearranged(self):
+    def test_domain_rules_precede_ip_rules_for_ipondemand(self):
         body = "\n".join([
             "IP-CIDR,8.8.8.0/24,DIRECT",
             "DOMAIN-SUFFIX,example.com,PROXY",
             "IP-CIDR,9.9.9.0/24,DIRECT",
+            "DOMAIN-SUFFIX,late.example.net,PROXY",
         ])
         rules, _ = convert(body)
-        self.assertEqual(route(rules, host="example.com", ip="8.8.8.8"), "direct")
-        self.assertEqual(route(rules, host="example.com", ip="9.9.9.9"), "proxy")
+        domain_positions = [i for i, rule in enumerate(rules) if "domain" in rule]
+        ip_positions = [i for i, rule in enumerate(rules) if "ip" in rule]
+        self.assertLess(max(domain_positions), min(ip_positions))
+        # A listed domain is matched before an IP rule can trigger DNS lookup.
+        self.assertEqual(route(rules, host="example.com", ip="8.8.8.8"), "proxy")
+        self.assertEqual(route(rules, host="late.example.net", ip="9.9.9.9"), "proxy")
+        # Unlisted domains still reach IP rules, then the final direct fallback.
+        self.assertEqual(route(rules, host="unlisted.invalid", ip="8.8.8.8"), "direct")
+        self.assertEqual(route(rules, ip="9.9.9.9"), "direct")
 
     def test_identical_duplicates_removed_without_moving_first(self):
         rules, meta = convert("\n".join([

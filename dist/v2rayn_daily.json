@@ -3,32 +3,10 @@
     "remarks": "Local bypass (daily skip-proxy)",
     "enabled": true,
     "outboundTag": "direct",
-    "ip": [
-      "192.168.0.0/16",
-      "10.0.0.0/8",
-      "172.16.0.0/12"
-    ]
-  },
-  {
-    "remarks": "Local bypass (daily skip-proxy)",
-    "enabled": true,
-    "outboundTag": "direct",
     "domain": [
       "full:localhost",
       "regexp:^.+\\.local$",
       "full:captive.apple.com"
-    ]
-  },
-  {
-    "remarks": "Local loopback/link-local/ULA bypass",
-    "enabled": true,
-    "outboundTag": "direct",
-    "ip": [
-      "127.0.0.0/8",
-      "169.254.0.0/16",
-      "::1/128",
-      "fe80::/10",
-      "fc00::/7"
     ]
   },
   {
@@ -53,68 +31,9 @@
       "domain:telegra.ph",
       "domain:telegram.me",
       "domain:telegram.org",
-      "domain:telesco.pe"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "ip": [
-      "91.108.56.0/22",
-      "91.108.4.0/22",
-      "91.108.8.0/22",
-      "91.108.16.0/22",
-      "91.108.12.0/22",
-      "149.154.160.0/20",
-      "91.105.192.0/23",
-      "91.108.20.0/22",
-      "185.76.151.0/24",
-      "2001:b28:f23d::/48",
-      "2001:b28:f23f::/48",
-      "2001:67c:4e8::/48",
-      "2001:b28:f23c::/48",
-      "2a0a:f280::/32"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "domain": [
-      "domain:disquscdn.com"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "ip": [
-      "18.194.0.0/15",
-      "34.224.0.0/12"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "domain": [
-      "domain:appledaily.tw"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "ip": [
-      "74.125.0.0/16"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "domain": [
+      "domain:telesco.pe",
+      "domain:disquscdn.com",
+      "domain:appledaily.tw",
       "domain:www-google-analytics.l.google.com",
       "domain:ssl-google-analytics.l.google.com",
       "domain:partnerad.l.google.com",
@@ -21003,22 +20922,7 @@
       "domain:www.aafmua.org",
       "domain:rr1---sn-5hnekn7s.googlevideo.com",
       "domain:kir019464.kir.jp",
-      "domain:keming.cc"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "ip": [
-      "85.17.73.31/32"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "domain": [
+      "domain:keming.cc",
       "domain:freebrowser.net",
       "domain:stc.com.sa",
       "domain:proxyie.cn",
@@ -30307,22 +30211,7 @@
       "domain:weinidaohang.com",
       "domain:chat.tiabless.com",
       "domain:mjj.today",
-      "domain:i-scmp.com"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "ip": [
-      "50.7.31.230/32"
-    ]
-  },
-  {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "domain": [
+      "domain:i-scmp.com",
       "keyword:blogspot",
       "domain:akamaihd.net",
       "domain:azurewebsites.net",
@@ -30335,25 +30224,66 @@
     ]
   },
   {
-    "remarks": "Johnshall blacklist",
-    "enabled": true,
-    "outboundTag": "proxy",
-    "ip": [
-      "67.198.55.0/24",
-      "109.239.140.0/24",
-      "149.154.164.0/22",
-      "149.154.168.0/22",
-      "149.154.172.0/22",
-      "74.125.23.127/32"
-    ]
-  },
-  {
     "remarks": "Apple News (expanded RULE-SET)",
     "enabled": true,
     "outboundTag": "proxy",
     "domain": [
       "full:gspe1-ssl.ls.apple.com",
       "full:news-client-search.apple.com"
+    ]
+  },
+  {
+    "remarks": "Local bypass (daily skip-proxy)",
+    "enabled": true,
+    "outboundTag": "direct",
+    "ip": [
+      "192.168.0.0/16",
+      "10.0.0.0/8",
+      "172.16.0.0/12"
+    ]
+  },
+  {
+    "remarks": "Local loopback/link-local/ULA bypass",
+    "enabled": true,
+    "outboundTag": "direct",
+    "ip": [
+      "127.0.0.0/8",
+      "169.254.0.0/16",
+      "::1/128",
+      "fe80::/10",
+      "fc00::/7"
+    ]
+  },
+  {
+    "remarks": "Johnshall blacklist",
+    "enabled": true,
+    "outboundTag": "proxy",
+    "ip": [
+      "91.108.56.0/22",
+      "91.108.4.0/22",
+      "91.108.8.0/22",
+      "91.108.16.0/22",
+      "91.108.12.0/22",
+      "149.154.160.0/20",
+      "91.105.192.0/23",
+      "91.108.20.0/22",
+      "185.76.151.0/24",
+      "2001:b28:f23d::/48",
+      "2001:b28:f23f::/48",
+      "2001:67c:4e8::/48",
+      "2001:b28:f23c::/48",
+      "2a0a:f280::/32",
+      "18.194.0.0/15",
+      "34.224.0.0/12",
+      "74.125.0.0/16",
+      "85.17.73.31/32",
+      "50.7.31.230/32",
+      "67.198.55.0/24",
+      "109.239.140.0/24",
+      "149.154.164.0/22",
+      "149.154.168.0/22",
+      "149.154.172.0/22",
+      "74.125.23.127/32"
     ]
   },
   {

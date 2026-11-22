@@ -101,9 +101,12 @@ def convert_config(
 ) -> tuple[list[dict], dict]:
     """Return RulesItem array and deterministic provenance/count metadata.
 
-    Only adjacent predicates with the same field, action and source group are
-    combined. A domain and an IP condition MUST NOT share one Xray rule: that
-    would mean AND instead of OR. Exact duplicates retain their first position.
+    Adjacent predicates with the same field, action and source group are
+    combined. All domain rules are emitted before IP rules so Xray can match a
+    listed proxy domain before IPOnDemand triggers DNS for an IP condition.
+    Source order is preserved within the domain rules and within the IP rules.
+    A domain and IP condition MUST NOT share one Xray rule because that means
+    AND instead of OR. Exact duplicates retain their first position.
     fetcher can be replaced with a fixture loader for fully offline tests.
     """
     sections = _sections(text)
@@ -115,6 +118,9 @@ def convert_config(
     expanded_counts: Counter[str] = Counter()
     ruleset_cache: dict[str, list[tuple[str, str]]] = {}
     rulesets: list[dict] = []
+    # Defer every IP predicate until all domain predicates have been emitted.
+    # With Xray IPOnDemand, the first IP rule can trigger DNS resolution.
+    pending_ip: list[tuple[str, str, str, str]] = []
 
     def emit(field: str, value: str, tag: str, remarks: str) -> None:
         key = (field, value, tag)
@@ -155,9 +161,9 @@ def convert_config(
                 emit("domain", "full:" + _domain(value), "direct",
                      "Local bypass (daily skip-proxy)")
         else:
-            emit("ip", str(network), "direct", "Local bypass (daily skip-proxy)")
+            pending_ip.append(("ip", str(network), "direct", "Local bypass (daily skip-proxy)"))
     for value in ADDITIONAL_LOCAL_IP:
-        emit("ip", value, "direct", "Local loopback/link-local/ULA bypass")
+        pending_ip.append(("ip", value, "direct", "Local loopback/link-local/ULA bypass"))
 
     def convert_leaf(kind: str, value: str, policy: str, remarks: str) -> None:
         if policy not in POLICIES:
@@ -169,7 +175,7 @@ def convert_config(
             network = _cidr(value)
             if kind == "IP-CIDR6" and ipaddress.ip_network(network).version != 6:
                 raise ConversionError(f"IP-CIDR6 is not IPv6: {value}")
-            emit("ip", network, POLICIES[policy], remarks)
+            pending_ip.append(("ip", network, POLICIES[policy], remarks))
         else:
             raise ConversionError(f"Unsupported rule type: {kind}")
 
@@ -226,7 +232,6 @@ def convert_config(
                 raise ConversionError("Only FINAL,DIRECT is supported")
             final_seen = True
             expanded_counts["FINAL"] += 1
-            emit("port", "0-65535", "direct", "Final direct fallback")
             continue
         if len(parts) != 3 or not all(parts):
             raise ConversionError(f"Unsupported rule syntax/flags: {line}")
@@ -239,6 +244,11 @@ def convert_config(
             convert_leaf(kind, parts[1], policy, remarks)
     if not final_seen:
         raise ConversionError("Missing FINAL,DIRECT fallback")
+    # Order is intentional: local/domain bypasses, all domain rules, local IP
+    # bypasses, all source IP rules, then the catch-all direct fallback.
+    for field, value, tag, rule_remarks in pending_ip:
+        emit(field, value, tag, rule_remarks)
+    emit("port", "0-65535", "direct", "Final direct fallback")
     if sum(expanded_counts.values()) <= 1:
         raise ConversionError("Empty routing rule list")
     metadata = {

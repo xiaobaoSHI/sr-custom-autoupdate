@@ -13,11 +13,13 @@ v2rayN 7.25.6 的实际 [RulesItem 类](https://github.com/2dust/v2rayN/blob/7.2
 
 顺序固定为：
 
-1. 日常配置 `skip-proxy` 的私网、`localhost`、`*.local`、`captive.apple.com` 直连旁路。
-2. 补全本地回环/链路本地/IPv6 ULA 旁路：`127.0.0.0/8`、`169.254.0.0/16`、`::1/128`、`fe80::/10`、`fc00::/7`。这是局域网绕过路由，不启用、禁用或拒绝 IPv6。
-3. 四个自定义检测站（browserleaks.com、ipleak.net、dnsleaktest.com、test-ipv6.com），保持自定义文件原顺序及出站。
-4. Johnshall 上游规则，按源文件顺序；远程 Apple News 在引用所在位置展开。
+1. `skip-proxy` 中的本地域名（`localhost`、`*.local`、`captive.apple.com`）直连。
+2. 四个自定义检测站和 Johnshall 的全部域名规则，按原有域名规则顺序匹配；Apple News 在引用位置展开。
+3. 本地 IP 直连旁路：私网、回环、链路本地和 IPv6 ULA。
+4. Johnshall 的 IP 网段规则，保持 IP 规则内部原顺序。
 5. 唯一的最终直连：`{"port":"0-65535","outboundTag":"direct"}`。
+
+**这个顺序是有意的。** Xray 使用 `IPOnDemand` 时，遇到第一条 IP 规则就可能先解析目标域名。因此先检查域名名单，命中代理的网站就不会为了后面的 IP 规则而提前触发 DNS 解析。
 
 | 源规则 | JSON 条件 | 语义 |
 |---|---|---|
@@ -55,10 +57,12 @@ main 生产 URL 等审阅合并后再提供。本分支的 raw 文件仅作审�
 
 ## DNS、IPv6 与验证边界
 
-JSON 不包含 DNS、`domainStrategy`、IPv6 开关、嗅探或 TUN 设置；不移植 Shadowrocket General 的 DNS/IPv6 策略，也不移植隐私版的 IPv6 拒绝规则。
+JSON 不包含 DNS 服务器、IPv6 开关、嗅探或 TUN 设置；不移植 Shadowrocket General 的 DNS/IPv6 配置，也不移植隐私版的 IPv6 拒绝规则。
 保留 IPv6 CIDR 和本地旁路不等于修改 IPv6 开关。
-现有客户端的域名可见性和 DNS 路由策略仍会影响实际匹配：只有 IP 而无域名时不能命中域名规则；`IPOnDemand` 可能先解析域名并命中 IP 规则。
-[v2rayN 生成 Xray 路由的代码](https://github.com/2dust/v2rayN/blob/7.25.6/v2rayN/ServiceLib/Services/CoreConfig/V2ray/V2rayRoutingService.cs) 会保留客户端的路由解析策略，并可能在 TUN 下插入系统 DNS/进程规则。因此这里保证的是用户规则集内部顺序，不覆盖客户端已有的系统规则。
+
+为了让这份名单里的 IP-CIDR 规则也能匹配域名请求，**只需在这一个 v2rayN 路由规则集的「Domain Strategy」下拉框选择 `IPOnDemand`**。这是该规则集的路由匹配策略，不是修改 DNS 服务器或全局网络设置。`AsIs` 会跳过域名到 IP 的路由匹配；`IPIfNonMatch` 则会被最后的全流量直连规则提前命中，无法完成第二轮 IP 匹配。
+v2rayN 7.25.6 在路由规则集窗口单独保存此设置：[路由窗口绑定](https://github.com/2dust/v2rayN/blob/7.25.6/v2rayN/v2rayN.Windows/Views/RoutingRuleSettingWindow.xaml.cs)、[路由项目字段](https://github.com/2dust/v2rayN/blob/7.25.6/v2rayN/ServiceLib/Models/Entities/RoutingItem.cs)。这不改 DNS 服务器、IPv6、TUN 或其他规则集设置。
+[v2rayN 生成 Xray 路由的代码](https://github.com/2dust/v2rayN/blob/7.25.6/v2rayN/ServiceLib/Services/CoreConfig/V2ray/V2rayRoutingService.cs) 会使用这个路由规则集自己的策略，并可能在 TUN 下插入系统 DNS/进程规则。因此这里保证的是用户规则集内部顺序，不覆盖客户端已有的系统规则。
 
 自动测试包含解析、格式/字段类型、计数守恒、重复项、精确域名/后缀/关键词/IP、Apple News 展开、来源失败及独立首条匹配模拟。
 关键行为：四站、google、amazon.cn、Apple News 与命中的代理 IP 走代理，baidu.com、未命中站点、局域网地址直连。

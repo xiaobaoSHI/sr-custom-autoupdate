@@ -39,7 +39,7 @@
       "outboundTag": "proxy"
     }
   ],
-  "output_rule_groups": 18,
+  "output_rule_groups": 8,
   "rulesets": [
     {
       "url": "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/AppleNews/AppleNews.list",
@@ -67,6 +67,6 @@
       "fc00::/7"
     ]
   },
-  "output_sha256": "8326a69bc58d328001a11791165f3211d76dd6312b4fe320ba682e0c4761529d",
+  "output_sha256": "57ecbd7e8b73e5bb4a0b5eb528d68ecbc2bc3bc39e4ecd0e681f2b64be7169ea",
   "input_file": "sr_top500_banlist_custom_daily.conf"
 }
