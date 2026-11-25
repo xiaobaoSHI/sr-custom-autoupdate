@@ -65,7 +65,7 @@ v2rayN 7.25.6 在路由规则集窗口单独保存此设置：[路由窗口绑�
 [v2rayN 生成 Xray 路由的代码](https://github.com/2dust/v2rayN/blob/7.25.6/v2rayN/ServiceLib/Services/CoreConfig/V2ray/V2rayRoutingService.cs) 会使用这个路由规则集自己的策略，并可能在 TUN 下插入系统 DNS/进程规则。因此这里保证的是用户规则集内部顺序，不覆盖客户端已有的系统规则。
 
 自动测试包含解析、格式/字段类型、计数守恒、重复项、精确域名/后缀/关键词/IP、Apple News 展开、来源失败及独立首条匹配模拟。
-关键行为：四站、google、amazon.cn、Apple News 与命中的代理 IP 走代理，baidu.com、未命中站点、局域网地址直连。
+关键行为：Cloudflare 主域名及子域名、四个检测站、google、amazon.cn、Apple News 与命中的代理 IP 走代理，baidu.com、未命中站点、局域网地址直连。
 这些测试不替代实际节点连通、DNS 泄漏或 TUN 端到端检查；本任务未在用户电脑导入规则或进行这些联网检查。
 
 ## 本地复现
