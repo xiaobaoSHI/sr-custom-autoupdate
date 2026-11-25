@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "target": "v2rayN 7.25.6 RulesItem[] / Xray",
-  "input_sha256": "4a0aee03874b671188442d8048b26ccf4997feaac32d8fd3bb68c7bf69bb0f39",
+  "input_sha256": "77371d92794058217695866003dd87592557d56492dbc21374d75e3e208769e6",
   "input_rule_counts": {
     "DOMAIN-KEYWORD": 7,
     "DOMAIN-SUFFIX": 30196,
@@ -67,6 +67,6 @@
       "fc00::/7"
     ]
   },
-  "output_sha256": "8a39b6ceb28e72a189ecf5fae3c30e8424259ab0638c53c9f540e9fe938e902f",
+  "output_sha256": "6982f48cb0a07b555f490d7e2a2e2a3a031e4915a544e0112238af0f8fb7d87d",
   "input_file": "sr_top500_banlist_custom_daily.conf"
 }
