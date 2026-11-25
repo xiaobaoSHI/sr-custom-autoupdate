@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "target": "v2rayN 7.25.6 RulesItem[] / Xray",
-  "input_sha256": "77371d92794058217695866003dd87592557d56492dbc21374d75e3e208769e6",
+  "input_sha256": "edae6471a297e46e53256a09af9599bff0669fc5beda6ddae16132214f2ffd32",
   "input_rule_counts": {
     "DOMAIN-KEYWORD": 7,
     "DOMAIN-SUFFIX": 30196,
