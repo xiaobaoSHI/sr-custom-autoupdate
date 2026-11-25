@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "target": "v2rayN 7.25.6 RulesItem[] / Xray",
-  "input_sha256": "edae6471a297e46e53256a09af9599bff0669fc5beda6ddae16132214f2ffd32",
+  "input_sha256": "f08fcebf69f40a1fce49713c24222ea011099290aa0bb2fadf78287bb61d9e05",
   "input_rule_counts": {
     "DOMAIN-KEYWORD": 7,
-    "DOMAIN-SUFFIX": 30196,
+    "DOMAIN-SUFFIX": 30197,
     "FINAL": 1,
     "IP-CIDR": 25,
     "RULE-SET": 1
@@ -12,12 +12,12 @@
   "expanded_rule_counts": {
     "DOMAIN": 2,
     "DOMAIN-KEYWORD": 7,
-    "DOMAIN-SUFFIX": 30196,
+    "DOMAIN-SUFFIX": 30197,
     "FINAL": 1,
     "IP-CIDR": 25
   },
   "emitted_match_counts": {
-    "domain": 30205,
+    "domain": 30206,
     "ip": 33,
     "port": 1
   },
@@ -67,6 +67,6 @@
       "fc00::/7"
     ]
   },
-  "output_sha256": "6982f48cb0a07b555f490d7e2a2e2a3a031e4915a544e0112238af0f8fb7d87d",
+  "output_sha256": "5a904f6d180336945f3f0490f1eea87b612e61733b5459b6e98c5ce90d105441",
   "input_file": "sr_top500_banlist_custom_daily.conf"
 }

@@ -14,6 +14,7 @@
     "enabled": true,
     "outboundTag": "proxy",
     "domain": [
+      "domain:cloudflare.com",
       "domain:browserleaks.com",
       "domain:ipleak.net",
       "domain:dnsleaktest.com",

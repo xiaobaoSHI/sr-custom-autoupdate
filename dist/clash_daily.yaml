@@ -7,6 +7,7 @@ rules:
   - "DOMAIN,localhost,DIRECT"
   - "DOMAIN-REGEX,^.+\\.local$,DIRECT"
   - "DOMAIN,captive.apple.com,DIRECT"
+  - "DOMAIN-SUFFIX,cloudflare.com,PROXY"
   - "DOMAIN-SUFFIX,browserleaks.com,PROXY"
   - "DOMAIN-SUFFIX,ipleak.net,PROXY"
   - "DOMAIN-SUFFIX,dnsleaktest.com,PROXY"
