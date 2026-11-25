@@ -130,12 +130,12 @@ class GeneratedArtifactTests(unittest.TestCase):
         self.assertEqual(self.rules[-1]["outboundTag"], "direct")
         self.assertEqual(self.rules[-1]["port"], "0-65535")
 
-    def test_four_custom_detection_sites_keep_priority(self):
+    def test_five_custom_priority_sites_keep_priority(self):
         custom_groups = [rule for rule in self.rules if rule["remarks"] == "Custom priority rules"]
         self.assertTrue(custom_groups)
         self.assertEqual(custom_groups[0]["outboundTag"], "proxy")
-        expected = ["browserleaks.com", "ipleak.net", "dnsleaktest.com", "test-ipv6.com"]
-        self.assertEqual(custom_groups[0]["domain"][:4], ["domain:" + host for host in expected])
+        expected = ["cloudflare.com", "browserleaks.com", "ipleak.net", "dnsleaktest.com", "test-ipv6.com"]
+        self.assertEqual(custom_groups[0]["domain"][:5], ["domain:" + host for host in expected])
         first_custom = self.rules.index(custom_groups[0])
         first_upstream = next(i for i, rule in enumerate(self.rules) if rule["remarks"] == "Johnshall blacklist")
         self.assertLess(first_custom, first_upstream)
@@ -148,6 +148,7 @@ class GeneratedArtifactTests(unittest.TestCase):
     def test_known_domain_behavior(self):
         expected = {
             "www.google.com": "proxy", "www.amazon.cn": "proxy",
+            "cloudflare.com": "proxy", "www.cloudflare.com": "proxy", "dash.cloudflare.com": "proxy",
             "www.amazon.com": "proxy", "www.baidu.com": "direct",
             "unlisted-example.invalid": "direct", "localhost": "direct",
             "printer.local": "direct", "captive.apple.com": "direct",
