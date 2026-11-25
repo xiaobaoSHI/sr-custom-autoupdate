@@ -41,6 +41,16 @@ jobs:
       - name: Build v2rayN routing rules
         run: python scripts/build_v2rayn.py
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Build and test Clash routing rules
+        run: |
+          node scripts/build_clash.mjs
+          node --test tests/test_clash.mjs
+
       - name: Test conversion and generated artifacts
         run: python -m unittest discover -s tests -v
 
@@ -55,7 +65,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist/sr_top500_banlist_custom_daily.conf dist/sr_top500_banlist_custom_privacy.conf dist/v2rayn_daily.json dist/v2rayn_daily.meta.json
+          git add dist/sr_top500_banlist_custom_daily.conf dist/sr_top500_banlist_custom_privacy.conf dist/v2rayn_daily.json dist/v2rayn_daily.meta.json dist/clash_daily.yaml
           if git diff --cached --quiet; then
             echo "No generated changes."
           else
